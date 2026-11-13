@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Ticket Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5f3;
+            margin: 0;
+            text-align: center;
+        }
+
+        header {
+            background: #123f38;
+            color: white;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #123f38;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        #ticket {
+            text-align: left;
+            border: 2px dashed #123f38;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Bus Ticket Management System</h1>
+    <p>Book your ticket easily</p>
+</header>
+
+<div class="container">
+    <h2>Passenger Information</h2>
+
+    <input id="name" placeholder="Passenger Name">
+    <input id="phone" placeholder="Phone Number">
+    <input id="address" placeholder="Passenger Address">
+
+    <label>From</label>
+    <select id="from">
+        <option>Cumilla</option>
+        <option>Dhaka</option>
+        <option>Chattogram</option>
+    </select>
+
+    <label>Destination</label>
+    <select id="to">
+        <option>Dhaka</option>
+        <option>Cumilla</option>
+        <option>Chattogram</option>
+    </select>
+
+    <label>Journey Date</label>
+    <input type="date" id="date">
+
+    <h3>Choose Seat</h3>
+    <select id="seat">
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="A3">A3</option>
+        <option value="B1">B1</option>
+        <option value="B2">B2</option>
+        <option value="B3">B3</option>
+    </select>
+
+    <button onclick="generateTicket()">Generate Ticket</button>
+
+    <div id="ticket" hidden></div>
+
+    <button id="download" onclick="downloadTicket()" hidden>
+        Download Ticket
+    </button>
+</div>
+
+<script>
+    let serialNumber = 1;
+    let currentTicket = "";
+
+    function generateTicket() {
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const from = document.getElementById("from").value;
+        const to = document.getElementById("to").value;
+        const date = document.getElementById("date").value;
+        const seat = document.getElementById("seat").value;
+
+        if (!name || !phone || !address || !date) {
+            alert("Please fill in all passenger details.");
+            return;
+        }
+
+        if (from === to) {
+            alert("Starting point and destination must be different.");
+            return;
+        }
+
+        const serial = "BUS-" +
+            String(serialNumber++).padStart(6, "0");
+
+        currentTicket =
+`BUS TICKET MANAGEMENT SYSTEM
+
+Ticket Serial: ${serial}
+Passenger Name: ${name}
+Phone Number: ${phone}
+Address: ${address}
+
+From: ${from}
+Destination: ${to}
+Journey Date: ${date}
+Seat Number: ${seat}
+
+Ticket Fare: 650 BDT`;
+
+        const ticket = document.getElementById("ticket");
+        ticket.textContent = currentTicket;
+        ticket.hidden = false;
+
+        document.getElementById("download").hidden = false;
+    }
+
+    function downloadTicket() {
+        if (!currentTicket) return;
+
+        const blob = new Blob([currentTicket], {
+            type: "text/plain;charset=utf-8"
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "bus-ticket.txt";
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
